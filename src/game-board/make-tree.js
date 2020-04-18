@@ -1,10 +1,7 @@
 const makeTree = ({
     rows = 8,
     cols = 8,
-    classes: {
-        lightCell,
-        darkCell,
-    },
+    classes,
 }) => {
     const tree = {
         main: {
@@ -22,8 +19,15 @@ const makeTree = ({
 
     const { board } = tree.main.childNodes;
 
-    const light = lightCell || 'game-board_light-cell';
-    const dark = darkCell || 'game-board_dark-cell';
+    let light;
+    let dark;
+    if (classes !== undefined) {
+        light = classes.lightCell;
+        dark = classes.darkCell;
+    } else {
+        light = 'game-board_light-cell';
+        dark = 'game-board_dark-cell';
+    }
 
     for (let row = 0; row < rows; row++) {
         board.childNodes[row] = {
