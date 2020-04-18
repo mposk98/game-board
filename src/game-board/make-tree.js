@@ -37,7 +37,8 @@ const makeTree = ({
         };
         for (let col = 0; col < cols; col++) {
             const className = col % 2 === row % 2 ? light : dark;
-            board.childNodes[row].childNodes[col] = {
+            const cellName = `${row}${col}`;
+            board.childNodes[row].childNodes[cellName] = {
                 element: 'div',
                 classList: [className, 'game-board_cell'],
             };
