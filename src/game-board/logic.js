@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 
-const addLogic = (elements) => {
+import addDragAndDrop from './drag-n-drop';
+
+const addLogic = (boardSize) => (elements) => {
     const publicInterface = {};
 
     publicInterface.setPiece = ([row, col], url) => {
@@ -20,41 +22,14 @@ const addLogic = (elements) => {
         });
     };
 
-    let idFrom = null;
-
-    publicInterface.onDragStart = (callback) => {
-        elements.board.addEventListener('mousedown', (event) => {
-            const stringId = event.target.dataset.id;
-            event.preventDefault();
-            const dragPiece = callback(stringId.split(''));
-            if (dragPiece !== null) {
-                elements[stringId].style.backgroundImage = 'none';
-                idFrom = stringId;
-            }
-        });
-    };
-
-    publicInterface.onDragEnd = (callback) => {
-        elements.board.addEventListener('mouseup', (event) => {
-            if (idFrom !== null) {
-                event.preventDefault();
-                const idTo = event.target.dataset.id;
-                const draggedPiece = callback(idTo.split(''));
-                if (draggedPiece !== null) {
-                    elements[idTo].style.backgroundImage = `url(${draggedPiece})`;
-                    idFrom = null;
-                } else {
-                    elements[idFrom].style.backgroundImage = `url(${draggedPiece})`;
-                    idFrom = null;
-                }
-            }
-        });
-    };
+    addDragAndDrop(publicInterface, elements, boardSize);
 
     const initSize = () => {
         const { main, board } = elements;
-        const size = Math.min(main.clientHeight, main.clientWidth);
-        board.setAttribute('style', `width: ${size}px; height: ${size}px`);
+        const divSize = Math.min(main.clientHeight, main.clientWidth);
+        const { style } = board;
+        style.width = `${divSize}px`;
+        style.height = `${divSize}px`;
     };
 
     window.addEventListener('resize', initSize);

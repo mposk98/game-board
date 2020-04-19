@@ -20,5 +20,5 @@ gameBoard.removePiece([0, 0]);
 // gameBoard.onClick((id) => {
 //     gameBoard.setPiece(id, white);
 // });
-gameBoard.onDragStart(() => true);
+gameBoard.onDragStart(() => white);
 gameBoard.onDragEnd(() => white);
