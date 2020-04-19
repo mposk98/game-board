@@ -6,7 +6,7 @@ const addLogic = (elements) => {
     };
 
     elements.removePiece = ([row, col]) => {
-        elements[`${row}${col}`].style.backgroundImage('none');
+        elements[`${row}${col}`].style.backgroundImage = 'none';
     };
 
     const initSize = () => {
