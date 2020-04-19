@@ -1,13 +1,19 @@
 /* eslint-disable no-param-reassign */
 
-const addLogic = (elements) => {
-    elements.setPiece = ([row, col], url) => {
+const addLogic = (publicInterface) => (elements) => {
+    publicInterface.setPiece = ([row, col], url) => {
         elements[`${row}${col}`].style.backgroundImage = `url(${url})`;
     };
 
-    elements.removePiece = ([row, col]) => {
+    publicInterface.removePiece = ([row, col]) => {
         elements[`${row}${col}`].style.backgroundImage = 'none';
     };
+
+    elements.board.addEventListener('click', (event) => {
+        event.preventDefault();
+        const handler = publicInterface.onClick;
+        if (typeof handler === 'function') handler(event.target.id.split(''));
+    });
 
     const initSize = () => {
         const { main, board } = elements;
@@ -17,8 +23,8 @@ const addLogic = (elements) => {
 
     window.addEventListener('resize', initSize);
 
-    elements.initSize = initSize;
-    elements.cleanup = () => {
+    publicInterface.initSize = initSize;
+    publicInterface.cleanup = () => {
         window.removeEventListener('resize', initSize);
     };
     return elements;
