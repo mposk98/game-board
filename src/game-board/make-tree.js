@@ -40,7 +40,9 @@ const makeTree = ({
             const cellName = `${row}${col}`;
             board.childNodes[row].childNodes[cellName] = {
                 element: 'div',
-                id: `${row}${col}`,
+                attributes: {
+                    'data-id': `${row}${col}`,
+                },
                 classList: [className, 'game-board_cell'],
             };
         }

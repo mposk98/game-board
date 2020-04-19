@@ -2,12 +2,14 @@ const createElements = (tree) => {
     const elements = {};
 
     const handleNode = (node, nodeName, nodeElement) => {
-        const { classList, childNodes, id } = node;
+        const { classList, childNodes, attributes } = node;
         if (classList !== undefined) {
             nodeElement.classList.add(...classList);
         }
-        if (id !== undefined) {
-            nodeElement.setAttribute('id', id);
+        if (attributes !== undefined) {
+            Object.keys(attributes).forEach((attributeName) => {
+                nodeElement.setAttribute(attributeName, attributes[attributeName]);
+            });
         }
         elements[nodeName] = nodeElement;
         if (childNodes !== undefined) {

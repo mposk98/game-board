@@ -1,19 +1,55 @@
 /* eslint-disable no-param-reassign */
 
-const addLogic = (publicInterface) => (elements) => {
+const addLogic = (elements) => {
+    const publicInterface = {};
+
     publicInterface.setPiece = ([row, col], url) => {
-        elements[`${row}${col}`].style.backgroundImage = `url(${url})`;
+        const stringId = `${row}${col}`;
+        elements[stringId].style.backgroundImage = `url(${url})`;
     };
 
     publicInterface.removePiece = ([row, col]) => {
-        elements[`${row}${col}`].style.backgroundImage = 'none';
+        const stringId = `${row}${col}`;
+        elements[stringId].style.backgroundImage = 'none';
     };
 
-    elements.board.addEventListener('click', (event) => {
-        event.preventDefault();
-        const handler = publicInterface.onClick;
-        if (typeof handler === 'function') handler(event.target.id.split(''));
-    });
+    publicInterface.onClick = (callback) => {
+        elements.board.addEventListener('click', (event) => {
+            event.preventDefault();
+            callback(event.target.dataset.id.split(''));
+        });
+    };
+
+    let idFrom = null;
+
+    publicInterface.onDragStart = (callback) => {
+        elements.board.addEventListener('mousedown', (event) => {
+            const stringId = event.target.dataset.id;
+            event.preventDefault();
+            const dragPiece = callback(stringId.split(''));
+            if (dragPiece !== null) {
+                elements[stringId].style.backgroundImage = 'none';
+                idFrom = stringId;
+            }
+        });
+    };
+
+    publicInterface.onDragEnd = (callback) => {
+        elements.board.addEventListener('mouseup', (event) => {
+            if (idFrom !== null) {
+                event.preventDefault();
+                const idTo = event.target.dataset.id;
+                const draggedPiece = callback(idTo.split(''));
+                if (draggedPiece !== null) {
+                    elements[idTo].style.backgroundImage = `url(${draggedPiece})`;
+                    idFrom = null;
+                } else {
+                    elements[idFrom].style.backgroundImage = `url(${draggedPiece})`;
+                    idFrom = null;
+                }
+            }
+        });
+    };
 
     const initSize = () => {
         const { main, board } = elements;
@@ -27,7 +63,10 @@ const addLogic = (publicInterface) => (elements) => {
     publicInterface.cleanup = () => {
         window.removeEventListener('resize', initSize);
     };
-    return elements;
+
+    publicInterface.elements = elements;
+
+    return publicInterface;
 };
 
 export default addLogic;
