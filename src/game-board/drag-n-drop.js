@@ -1,16 +1,17 @@
 /* eslint-disable no-param-reassign */
-const movePiece = (event, piece) => {
+const movePiece = (event, piece, pieceSize) => {
     const { clientX, clientY } = event;
     const { style } = piece;
-    style.left = `${clientX}px`;
-    style.top = `${clientY}px`;
+    const delta = pieceSize / 2;
+    style.left = `${clientX - delta}px`;
+    style.top = `${clientY - delta}px`;
 };
 
 const addDragAndDrop = (publicInterface, elements, boardSize) => {
     let idFrom = null;
 
-    const dragListener = (event) => {
-        movePiece(event, elements.draggedPiece);
+    const dragListener = (pieceSize) => (event) => {
+        movePiece(event, elements.draggedPiece, pieceSize);
     };
 
     publicInterface.onDragStart = (callback) => {
@@ -19,20 +20,22 @@ const addDragAndDrop = (publicInterface, elements, boardSize) => {
             event.preventDefault();
             const dragPiece = callback(stringId.split(''));
             if (dragPiece !== null) {
+                const pieceSize = (elements.board.clientWidth / boardSize) * 0.9;
+                const pieceSizeString = `${pieceSize}px`;
+
                 elements[stringId].style.backgroundImage = 'none';
 
-                const { board, draggedPiece: { style: draggedPieceStyle } } = elements;
+                const { draggedPiece: { style: draggedPieceStyle } } = elements;
 
                 draggedPieceStyle.display = 'block';
                 draggedPieceStyle.backgroundImage = `url(${dragPiece})`;
-                const pieceSize = `${board.clientWidth / boardSize}px`;
-                draggedPieceStyle.width = pieceSize;
-                draggedPieceStyle.height = pieceSize;
+                draggedPieceStyle.width = pieceSizeString;
+                draggedPieceStyle.height = pieceSizeString;
 
                 idFrom = stringId;
 
-                movePiece(event, elements.draggedPiece);
-                window.addEventListener('mousemove', dragListener);
+                movePiece(event, elements.draggedPiece, pieceSize);
+                window.addEventListener('mousemove', dragListener(pieceSize));
             }
         });
     };
