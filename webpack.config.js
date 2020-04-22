@@ -1,8 +1,7 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-    entry: './test/index.js',
+    entry: './src/game-board/index.js',
     devServer: {
         stats: 'minimal',
     },
@@ -41,7 +40,4 @@ module.exports = {
     resolve: {
         extensions: ['.js'],
     },
-    plugins: [
-        new CopyWebpackPlugin(['public/index.html']),
-    ],
 };
