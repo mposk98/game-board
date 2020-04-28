@@ -8,18 +8,19 @@ const movePiece = (event, piece, pieceSize) => {
 };
 
 const addDragAndDrop = (publicInterface, elements, boardSize) => {
-    let idFrom = null;
-
     const dragListener = (pieceSize) => (event) => {
         movePiece(event, elements.draggedPiece, pieceSize);
     };
+
+    let dragFlag = false;
 
     publicInterface.onDragStart = (callback) => {
         elements.board.addEventListener('mousedown', (event) => {
             const stringId = event.target.dataset.id;
             event.preventDefault();
-            const dragPiece = callback(stringId.split(''));
+            const dragPiece = callback(stringId.split('').map((coord) => Number(coord)));
             if (dragPiece !== null) {
+                dragFlag = true;
                 const pieceSize = (elements.board.clientWidth / boardSize) * 0.9;
                 const pieceSizeString = `${pieceSize}px`;
 
@@ -32,8 +33,6 @@ const addDragAndDrop = (publicInterface, elements, boardSize) => {
                 draggedPieceStyle.width = pieceSizeString;
                 draggedPieceStyle.height = pieceSizeString;
 
-                idFrom = stringId;
-
                 movePiece(event, elements.draggedPiece, pieceSize);
                 window.addEventListener('mousemove', dragListener(pieceSize));
             }
@@ -42,26 +41,19 @@ const addDragAndDrop = (publicInterface, elements, boardSize) => {
 
     publicInterface.onDragEnd = (callback) => {
         elements.board.addEventListener('mouseup', (event) => {
-            if (idFrom !== null) {
+            if (dragFlag) {
+                dragFlag = false;
                 event.preventDefault();
                 const idTo = event.target.dataset.id;
-                const draggedPiece = callback(idTo.split(''));
-                if (draggedPiece !== null) {
-                    elements[idTo].style.backgroundImage = `url(${draggedPiece})`;
-                    idFrom = null;
-                } else {
-                    elements[idFrom].style.backgroundImage = `url(${draggedPiece})`;
-                    idFrom = null;
-                }
+                if (callback) callback(idTo.split('').map((coord) => Number(coord)));
                 elements.draggedPiece.style.display = 'none';
                 window.removeEventListener('mousemove', dragListener);
             }
         });
         elements.board.addEventListener('mouseleave', () => {
-            if (idFrom !== null) {
-                const draggedPiece = callback(null);
-                elements[idFrom].style.backgroundImage = `url(${draggedPiece})`;
-                idFrom = null;
+            if (dragFlag) {
+                dragFlag = false;
+                if (callback) callback(null);
                 elements.draggedPiece.style.display = 'none';
                 window.removeEventListener('mousemove', dragListener);
             }
