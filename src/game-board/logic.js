@@ -39,6 +39,16 @@ const addLogic = (boardSize) => (elements) => {
         window.removeEventListener('resize', initSize);
     };
 
+    publicInterface.highlightCell = ([row, col]) => {
+        const stringId = `${row}${col}`;
+        elements[stringId].classList.add('highlight');
+    };
+
+    publicInterface.unhighlightCell = ([row, col]) => {
+        const stringId = `${row}${col}`;
+        elements[stringId].classList.remove('highlight');
+    };
+
     publicInterface.elements = elements;
 
     return publicInterface;
